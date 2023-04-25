@@ -143,6 +143,9 @@ class shapDatetime{
     get getDateType(){
         return new Date(this.year, this.month - 1, this.day, this.hour, this.min, this.sec);
     }
+    get getDateTimeForFileName(){
+        return this.year + this.month + this.day + this.hour + this.min + this.sec;
+    }
 }
 
 module.exports = {

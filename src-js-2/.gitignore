@@ -6,3 +6,6 @@ browser.config.js
 
 # ライブラリ
 node_modules
+
+# logフォルダー
+logs
