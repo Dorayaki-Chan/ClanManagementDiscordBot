@@ -1,0 +1,148 @@
+<!-- プレビュー用: Handlebarsの変数をダミーデータで置換したファイル -->
+<!-- ※ このファイルはBot本体では使用しない。style.css / full.html を編集すること -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Full Profile [PREVIEW]</title>
+        <style>
+body {
+    width: 640px;
+    height: 450px;
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
+}
+header {
+    height: 30px;
+    width: 620px;
+    padding: 10px;
+    font-size: 20px;
+    color: #ffffff;
+    font-weight: bold;
+    font-family: "fantasy";
+    text-shadow: 2px 2px 2px black;
+}
+.header-title { float: left; }
+.header-option { float: right; }
+div.discord {
+    width: 620px;
+    height: 120px;
+    padding: 0px 10px;
+    position: relative;
+    overflow: hidden;
+}
+.ss {
+    width: 640px;
+    height: 450px;
+    background: #ffffff url("../../../../images/space01.png");
+    border-radius: 30px;
+    background-size: cover;
+}
+.ssa {
+    width: 640px;
+    height: 450px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+}
+div.avater { float: left; }
+img.avater {
+    border-radius: 10px;
+    border: 8px solid gold;
+}
+div.name {
+    margin: 0px;
+    padding: 0px 0px;
+    font-size: 35px;
+    color: #ffffff;
+    font-weight: bold;
+    font-family: "fantasy";
+    text-shadow: 2px 2px 2px black;
+}
+div.discord-ign {
+    position: absolute;
+    top: 70px;
+    left: 130px;
+    font-weight: bold;
+}
+div.discord-join-at {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+}
+div.game-info {
+    width: 640px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+}
+img.logo { float: left; }
+p.ign {
+    font-size: 30px;
+    font-weight: bold;
+    color: black;
+}
+div.role {
+    background-color: #4169e1;
+    margin: 0px 100px;
+    width: 200px;
+    color: #ffffff;
+    font-weight: bold;
+}
+div.join-at {
+    color: blue;
+    font-weight: bold;
+}
+p.option-title { font-size: 15px; }
+p.option-info  { font-size: 20px; }
+footer {
+    width: 620px;
+    height: 30px;
+    padding: 10px;
+}
+div.create {
+    float: right;
+    margin-top: 10px;
+}
+p { margin: 0px 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="ss">
+            <div class="ssa">
+                <header>
+                    <div class="header-title">PROFILE</div>
+                    <div class="header-option">ID:443054510781497344</div>
+                </header>
+                <div class="discord">
+                    <div class="avater">
+                        <img class="avater" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="" width="100" height="100">
+                    </div>
+                    <div class="name">テストユーザー</div>
+                    <div class="discord-ign"><p class="option-title">Registered Player Name</p><p class="option-info">TestPlayer</p></div>
+                    <div class="join-at discord-join-at"><p class="option-title">Join at</p><p>2024-1-15</p></div>
+                </div>
+                <div class="game-pro">
+                    <div class="game-info">
+                        <img class="logo" src="../../../../images/WarThunder.png" alt="" width="100" height="100">
+                        <div class="game-info-text">
+                            <p class="ign">ThunderPlayer</p>
+                            <div class="role"><p>Member</p></div>
+                            <div class="join-at"><p class="option-title">Join at</p><p>2024-2-1</p></div>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <img class="logo" src="../../../../images/wotb.png" alt="" width="100" height="100">
+                        <div class="game-info-text">
+                            <p class="ign">WotbPlayer</p>
+                            <div class="role"><p>Member</p></div>
+                            <div class="join-at"><p class="option-title">Join at</p><p>2024-3-1</p></div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <div class="create">Created:2026/6/14 15:00:00</div>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>

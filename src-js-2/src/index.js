@@ -67,6 +67,7 @@ client.once('ready', async() => {
         return data;
     })();    
     await client.application.commands.set(data, config.DiscordConfig.guildid);
+    // 接続確認
     console.log('接続しました！', new Date());
     client.user.setPresence({ activities: [{ name: '神げー界隈', type:"COMPETING" }], status: 'online' });
 });
