@@ -19,8 +19,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
       MYSQL_DATABASE: clandb
-      MYSQL_USER: ${USER}
-      MYSQL_PASSWORD: ${USER_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       LANG: 'ja_JP.UTF-8'
     volumes:
       - ${MYSQL_MOUNT_DIR:-./data}:/var/lib/mysql

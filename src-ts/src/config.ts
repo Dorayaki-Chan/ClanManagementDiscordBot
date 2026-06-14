@@ -12,8 +12,8 @@ export const CONFIG: AppConfig = ini.parse(
 export const DB_SETTING = {
     // docker-compose が DB_HOST=db を注入するため env を優先
     host: process.env.DB_HOST ?? CONFIG.Database.host,
-    user: process.env.USER!,
-    password: process.env.USER_PASSWORD!,
+    user: process.env.DB_USER!,
+    password: process.env.DB_PASSWORD!,
     database: 'clandb',
     supportBigNumbers: true,
     bigNumberStrings: true,
