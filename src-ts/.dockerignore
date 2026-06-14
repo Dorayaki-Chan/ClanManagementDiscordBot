@@ -1,6 +1,15 @@
 # ローカルのnode_modulesを無視
 node_modules
 
+# ローカルのビルド成果物を無視（Docker内でコンパイルする）
+build
+
+# MySQLデータディレクトリを無視（ソケットファイル等が含まれるため）
+data
+
+# ログを無視
+logs
+
 # sampleを無視
 .env.sample
 

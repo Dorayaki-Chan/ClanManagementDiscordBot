@@ -1,72 +1,69 @@
-FROM node:18-bullseye-slim
+FROM node:20-bookworm-slim
 
-# ロケールを設定する
-ENV LANG ja_JP.UTF-8
+ENV LANG=ja_JP.UTF-8
+ENV TZ=Asia/Tokyo
+# npm ci 時（root）も実行時（pptruser）も同じパスを参照させる
+ENV PUPPETEER_CACHE_DIR=/usr/app/.cache/puppeteer
 
-# タイムゾーンを設定する
-ENV TZ Asia/Tokyo
-
-# 	chromium-browserのダウンロードファイルをコピーする
-ADD ./chromiums/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb /tmp/
-ADD ./chromiums/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb /tmp/
-ADD ./chromiums/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb /tmp/
-ADD ./chromiums/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb /tmp/
-
-RUN apt-get update --allow-insecure-repositories \
-    && apt-get upgrade -y \
-    && apt-get install -y fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 --no-install-recommends  \
-    # armv7l アーキテクチャ用
-    && if [ "$(uname -m)" = "armv7l" ] ; then \
-        apt-get install -y libcairo2 libpango-1.0-0 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcups2 libdbus-1-3 libdrm2  libgbm1  libnspr4  libnss3  libxcomposite1  libxdamage1  libxfixes3  libxkbcommon0  libxrandr2  libxtst6  libx11-xcb1  xdg-utils \
-        # && dpkg -i /tmp/chromium-codecs-ffmpeg_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb \
-        && dpkg -i /tmp/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb \
-        && dpkg -i /tmp/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb \
-        && rm /tmp/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb \
-        && rm /tmp/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_armhf.deb \
-        && rm -rf /var/lib/apt/lists/* ; \
-    # Arm64 アーキテクチャ用
-    elif [ "$(uname -m)" = "aarch64" ] ; then \
-        apt-get install -y libcairo2 libpango-1.0-0 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcups2 libdbus-1-3 libdrm2  libgbm1  libnspr4  libnss3  libxcomposite1  libxdamage1  libxfixes3  libxkbcommon0  libxrandr2  libxtst6  libx11-xcb1  xdg-utils \
-        && dpkg -i /tmp/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb  \
-        && dpkg -i /tmp/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb \
-        && rm /tmp/chromium-codecs-ffmpeg-extra_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb \
-        && rm /tmp/chromium-browser_112.0.5615.49-0ubuntu0.18.04.1_arm64.deb \
-        && rm -rf /var/lib/apt/lists/* ; \
-    # x86_64 アーキテクチャ用
-    elif [ "$(uname -m)" = "x86_64" ] ; then \
-        apt-get install -y chromium \      
-        && rm -rf /var/lib/apt/lists/* ; \
-    fi
+# puppeteer が必要とするランタイムライブラリ（x86_64 / Debian 12）
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates \
+       fonts-ipafont-gothic \
+       fonts-wqy-zenhei \
+       fonts-thai-tlwg \
+       fonts-kacst \
+       fonts-freefont-ttf \
+       libxss1 \
+       libasound2 \
+       libatk-bridge2.0-0 \
+       libatk1.0-0 \
+       libcairo2 \
+       libcups2 \
+       libdbus-1-3 \
+       libdrm2 \
+       libfontconfig1 \
+       libgbm1 \
+       libglib2.0-0 \
+       libnspr4 \
+       libnss3 \
+       libpango-1.0-0 \
+       libpangocairo-1.0-0 \
+       libx11-6 \
+       libx11-xcb1 \
+       libxcb1 \
+       libxcomposite1 \
+       libxcursor1 \
+       libxdamage1 \
+       libxext6 \
+       libxfixes3 \
+       libxi6 \
+       libxkbcommon0 \
+       libxrandr2 \
+       libxrender1 \
+       libxtst6 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/app
 
-# アーキテクチャの確認
-RUN echo $(uname -m) > /usr/app/message2
+# package*.json を先にコピーしてレイヤーキャッシュを活かす
+COPY package*.json ./
 
-COPY . .
-# buildディレクトリを作成する
-RUN mkdir build
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
-RUN npm install \
-    # Add user so we don't need --no-sandbox.
-    # same layer as npm install to keep re-chowned files from using up several hundred MBs more space
+# puppeteer が bundled Chromium を自動ダウンロード（x86_64 用）
+RUN npm ci \
     && groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-    && mkdir -p /home/pptruser/Downloads \
+    && mkdir -p /home/pptruser/Downloads /usr/app/logs \
     && chown -R pptruser:pptruser /home/pptruser \
     && chown -R pptruser:pptruser /usr/app
 
-# Run everything after as non-privileged user.
 USER pptruser
 
-# TypeScriptをコンパイル
-RUN npm run compile
+COPY --chown=pptruser:pptruser . .
 
-# MySQLの設定ファイルをコピーする
-COPY ./my.cnf /etc/mysql/my.cnf
+# TypeScript をコンパイル + 静的アセットを build/ にコピー
+RUN npm run compile \
+    && cp -r src/commands/html-project build/src/commands/html-project
 
-# ポート番号を設定する
 EXPOSE 3000
 
 CMD ["npm", "run", "start"]

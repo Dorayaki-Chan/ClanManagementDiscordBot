@@ -1,0 +1,38 @@
+<!-- Thunderのみのプロフィール -->
+<html>
+    <head>
+        <title>Thunder Only Profile</title>
+        <link rel="stylesheet" href="../assets/css/style.css">
+    </head>
+    <body>
+        <div class="ss">
+            <div class="ssa">
+                <header>
+                    <div class="header-title">PROFILE</div>
+                    <div class="header-option">ID:{{discord.id}}</div>
+                </header>
+                <div class="discord">
+                    <div class="avater">
+                        <img class="avater" src="{{discord.avater}}" alt=""  width="100" height="100">
+                    </div>
+                    <div class="name">{{discord.name}}</div>
+                    <div class="discord-ign"><p class="option-title">Registered Player Name</p><p class="option-info">{{discord.ign}}</p></div>
+                    <div class="join-at discord-join-at"><p class="option-title">Join at</p><p>{{discord.enter_year}}-{{discord.enter_month}}-{{discord.enter_day}}</p></div>
+                </div>
+                <div class="game-pro">
+                    <div class="game-info">
+                        <img class="logo" src="{{pic.thunderLogo}}" alt=""  width="100" height="100">
+                        <div class="game-info-text">
+                            <p class="ign">{{thunder.ign}}</p>
+                            <div class="role"><p>{{thunder.role.name}}</p></div>
+                            <div class="join-at"><p class="option-title">Join at</p><p>{{thunder.enter_year}}-{{thunder.enter_month}}-{{thunder.enter_day}}</p></div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <div class="create">Created:{{date}}</div>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
