@@ -1,8 +1,0 @@
-# 設定キーファイル
-config.ini
-config.yaml
-node-html-to-image.config.json
-browser.config.js
-
-# ライブラリ
-node_modules

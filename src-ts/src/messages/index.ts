@@ -49,16 +49,20 @@ export async function kickCall(
         .setTitle('__**:cherry_blossom:非アクティブメンバー粛清大会:cherry_blossom:**__')
         .setDescription(
             '**非アクティブ且つDiscordクラン鯖未参加プレイヤー**を部隊よりキックします。\n候補者は下記の通りです。不具合により誤検出される場合があります。\n該当者は至急連絡されたし。'
+            + `\n\n**粛正対象者一覧**\n${text}`
         )
         .addFields({
-            name: '粛正対象者一覧',
-            value: `${text}\n※非アクティブプレイヤー\n\tWarThunder部門入隊後${progress}日が経過し直近30日のアクティビティが${minactivity}以下の者`,
+            name: '条件',
+            value: `※非アクティブプレイヤー\nWarThunder部門入隊後${progress}日が経過し直近30日のアクティビティが${minactivity}以下の者`,
         })
         .setColor(0x00ff00)
         .setTimestamp();
 
     const channel = client.channels.cache.get(channelId);
-    if (!channel || !('send' in channel)) return;
+    if (!channel || !('send' in channel)) {
+        log.warn(`kickCall チャンネルが見つかりません channel=${channelId}`);
+        return;
+    }
 
     const tc = channel as TextChannel;
     const me = tc.guild.members.me;

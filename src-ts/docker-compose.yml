@@ -16,14 +16,19 @@ services:
     image: mysql:8.0
     container_name: my-mysql
     restart: unless-stopped
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
       MYSQL_DATABASE: clandb
-      MYSQL_USER: ${USER}
-      MYSQL_PASSWORD: ${USER_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      DB_ADMIN_USER: ${DB_ADMIN_USER}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
       LANG: 'ja_JP.UTF-8'
     volumes:
       - ${MYSQL_MOUNT_DIR:-./data}:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s

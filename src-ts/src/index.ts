@@ -138,7 +138,12 @@ client.on('interactionCreate', async interaction => {
         const interactionId = interaction.isChatInputCommand()
             ? interaction.commandName
             : ('customId' in interaction ? String((interaction as { customId: unknown }).customId) : 'unknown');
-        log.error(`コマンドエラー [${interactionId}] user=${interaction.user.id}: ${error}`);
+        const errDetail = error instanceof AggregateError
+            ? error.errors.map(String).join(' | ')
+            : error instanceof Error
+                ? `${error.message} -- ${error.stack}`
+                : String(error);
+        log.error(`コマンドエラー [${interactionId}] user=${interaction.user.id}: ${errDetail}`);
         if (interaction.isRepliable() && !interaction.replied && !interaction.deferred) {
             await interaction.reply({
                 content: 'コマンド実行時にエラーが発生しました',

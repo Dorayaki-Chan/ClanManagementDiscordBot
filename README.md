@@ -74,3 +74,10 @@ docker cp <コンテナ名>:<コンテナ内のファイルパス> <ローカル
 ```
 docker-compose build --no-cache
 ```
+
+### 一番初めにDBのテーブルを作る方法
+```
+  ただし、今後 /info profile を正常に動作させるにはテーブルの作成が必要です。MySQL が起動した後に一度だけ実行してください：
+
+  docker compose exec bot node build/src/database/init.js
+```
