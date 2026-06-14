@@ -32,14 +32,17 @@ async function createDatabase(): Promise<void> {
 }
 
 async function createTables(): Promise<void> {
+    // 1. 参照元テーブルを先に作成
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS r_roles (
+            r_id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+            r_name VARCHAR(20) UNIQUE NOT NULL,
+            r_dis_id VARCHAR(18)
+        )
+    `);
+
+    // 2. r_roles を参照するテーブルを並列作成
     await Promise.all([
-        pool.query(`
-            CREATE TABLE IF NOT EXISTS r_roles (
-                r_id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
-                r_name VARCHAR(20) UNIQUE NOT NULL,
-                r_dis_id VARCHAR(18)
-            )
-        `),
         pool.query(`
             CREATE TABLE IF NOT EXISTS w_wotb_members (
                 w_user_id INT UNSIGNED NOT NULL PRIMARY KEY,
@@ -72,6 +75,10 @@ async function createTables(): Promise<void> {
                     ON DELETE RESTRICT ON UPDATE CASCADE
             )
         `),
+    ]);
+
+    // 3. w_wotb_members / t_wt_members / r_roles を参照するテーブルを並列作成
+    await Promise.all([
         pool.query(`
             CREATE TABLE IF NOT EXISTS d_discord_members (
                 d_user_id BIGINT NOT NULL PRIMARY KEY,
