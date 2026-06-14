@@ -1,0 +1,32 @@
+services:
+  bot:
+    container_name: my-discord-bot
+    restart: unless-stopped
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+    volumes:
+      - ./logs:/usr/app/logs
+  db:
+    image: mysql:8.0
+    container_name: my-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      MYSQL_DATABASE: clandb
+      MYSQL_USER: ${USER}
+      MYSQL_PASSWORD: ${USER_PASSWORD}
+      LANG: 'ja_JP.UTF-8'
+    volumes:
+      - ${MYSQL_MOUNT_DIR:-./data}:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
