@@ -58,7 +58,10 @@ export async function kickCall(
         .setTimestamp();
 
     const channel = client.channels.cache.get(channelId);
-    if (!channel || !('send' in channel)) return;
+    if (!channel || !('send' in channel)) {
+        log.warn(`kickCall チャンネルが見つかりません channel=${channelId}`);
+        return;
+    }
 
     const tc = channel as TextChannel;
     const me = tc.guild.members.me;
