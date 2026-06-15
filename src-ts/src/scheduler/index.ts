@@ -72,6 +72,7 @@ export class Daily {
 /** 毎日 08:58:30 JST にアクティビティ更新・キック候補抽出を行うクラス */
 export class Monthly {
     kickMem: ThunderUser[] = [];
+    wasSkipped: boolean = false;
 
     async main(): Promise<void> {
         const start = Date.now();
@@ -81,7 +82,14 @@ export class Monthly {
             IntegrationApiRequest.requestDiscord(),
             IntegrationApiRequest.requestThunder(),
         ]);
-        this.kickMem = (await OperationDatabase.Monthly(thunderUsers, discordUsers)) ?? [];
+        const result = await OperationDatabase.Monthly(thunderUsers, discordUsers);
+        if (result === null) {
+            this.wasSkipped = true;
+            this.kickMem = [];
+        } else {
+            this.wasSkipped = false;
+            this.kickMem = result;
+        }
 
         monthlyLog.info(`実行完了: キック候補 ${this.kickMem.length} 名 (${((Date.now() - start) / 1000).toFixed(1)}s)`);
     }

@@ -294,7 +294,9 @@ export class OperationDatabase {
     // =========================================================
     // Monthly: アクティビティ更新 + キック候補抽出
     // =========================================================
+    // メモ：戻り値は30日未経過の場合は null、経過済みは ThunderUser[]（空配列含む）
     static async Monthly(thunderUser: ThunderUser[], discordUser: DiscordUser[]) {
+        // 前回のアクティビティ更新から30日経過しているかを判定
         const [rows] = await pool.query<(CountRow & RowDataPacket)[]>(
             `SELECT COUNT(*) AS count_is FROM wt_actives
              WHERE CURRENT_DATE() >= DATE(DATE_ADD(
@@ -308,7 +310,7 @@ export class OperationDatabase {
             return OperationDatabase.LetLeftUser(thunderUser, discordUser);
         } else {
             opLog.info('アクティビティ更新スキップ: 前回から30日未経過');
-            return [];
+            return null;
         }
     }
 
@@ -350,14 +352,18 @@ export class OperationDatabase {
         discordUser: DiscordUser[]
     ): Promise<ThunderUser[]> {
         const now = new Date();
+        // 今の日付からキック猶予日数を引いた日付を算出し、最終入室日時がそれより前のユーザーをキック候補とする
         now.setDate(now.getDate() - Number(CONFIG.KickMember.progress));
 
         const results = await Promise.all(
             thunderUser.map(async tuser => {
+                // 活動時間が規定以上
                 if (tuser.nowactive > Number(CONFIG.KickMember.minactivity)) return null;
+                // 最終入室日時が猶予日数より後
                 if (!tuser.enter_at || tuser.enter_at.getDateType >= now) return null;
+                // Discordに同一のIGNが存在する場合はキック対象外
                 if (discordUser.some(d => d.ign === tuser.ign)) return null;
-
+                // 特例処置対象の場合はキック対象外
                 const [rows] = await pool.query<(CountRow & RowDataPacket)[]>(
                     `SELECT COUNT(*) AS count_is FROM t_wt_members
                      WHERE t_ign = ? AND t_special_treatment = true`,
