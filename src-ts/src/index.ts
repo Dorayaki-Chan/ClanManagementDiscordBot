@@ -89,14 +89,19 @@ client.on('ready', () => {
         try {
             const mom = new Monthly();
             await mom.main();
-            await kickCall(
-                client, mom.kickMemText,
-                serverInfo.channels.clanNewsCh,
-                serverInfo.roles.thunderRole,
-                CONFIG.KickMember.progress,
-                CONFIG.KickMember.minactivity
-            );
-            log.info(`キック告知送信: channel=${serverInfo.channels.clanNewsCh}`);
+            if(mom.kickMem.length !== 0) {
+                await kickCall(
+                    client, mom.kickMemText,
+                    serverInfo.channels.clanNewsCh,
+                    serverInfo.roles.thunderRole,
+                    CONFIG.KickMember.progress,
+                    CONFIG.KickMember.minactivity
+                );
+                log.info(`キック告知送信: channel=${serverInfo.channels.clanNewsCh}`);
+            } else {
+                log.info('キック対象なし若しくは、30日未経過のため、告知なし');
+            }
+            
         } catch (err) {
             log.error(`定時実行 (Monthly) エラー: ${err}`);
         }
