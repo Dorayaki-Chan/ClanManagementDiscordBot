@@ -294,7 +294,7 @@ export class OperationDatabase {
     // =========================================================
     // Monthly: アクティビティ更新 + キック候補抽出
     // =========================================================
-    // メモ：戻り値は前回のアクティビティ更新から30日未経過の場合は空配列を返す
+    // メモ：戻り値は30日未経過の場合は null、経過済みは ThunderUser[]（空配列含む）
     static async Monthly(thunderUser: ThunderUser[], discordUser: DiscordUser[]) {
         // 前回のアクティビティ更新から30日経過しているかを判定
         const [rows] = await pool.query<(CountRow & RowDataPacket)[]>(
@@ -310,7 +310,7 @@ export class OperationDatabase {
             return OperationDatabase.LetLeftUser(thunderUser, discordUser);
         } else {
             opLog.info('アクティビティ更新スキップ: 前回から30日未経過');
-            return [];
+            return null;
         }
     }
 

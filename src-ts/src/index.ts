@@ -89,7 +89,9 @@ client.on('ready', () => {
         try {
             const mom = new Monthly();
             await mom.main();
-            if(mom.kickMem.length !== 0) {
+            if (mom.wasSkipped) {
+                log.info('30日未経過のため、告知なし');
+            } else if (mom.kickMem.length !== 0) {
                 await kickCall(
                     client, mom.kickMemText,
                     serverInfo.channels.clanNewsCh,
@@ -99,7 +101,7 @@ client.on('ready', () => {
                 );
                 log.info(`キック告知送信: channel=${serverInfo.channels.clanNewsCh}`);
             } else {
-                log.info('キック対象なし若しくは、30日未経過のため、告知なし');
+                log.info('30日経過済みだがキック対象なし、告知なし');
             }
             
         } catch (err) {
